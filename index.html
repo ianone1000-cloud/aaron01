@@ -3,200 +3,820 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>命理諮詢 — 腦波 × 易經</title>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@200;300;400;900&family=Noto+Sans+TC:wght@300;400;700&family=Space+Mono&display=swap" rel="stylesheet">
+<title>腦波易經命理諮詢</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@200;300;400;700;900&family=Noto+Sans+TC:wght@300;400;500;700&family=Space+Mono&display=swap" rel="stylesheet">
 <style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
-body{font-family:'Noto Sans TC',sans-serif;background:#F5F2EC;color:#1A1612;overflow-x:hidden}
+/* ════════════════════════════════════════
+   DESIGN TOKENS
+   ════════════════════════════════════════ */
+:root {
+  --ink:       #1C1812;
+  --ink-mid:   #5C5248;
+  --ink-soft:  #9C9080;
+  --gold:      #B89A5A;
+  --gold-lt:   #D4B878;
+  --cream:     #F8F5EF;
+  --cream-dk:  #EDE8DF;
+  --white:     #FFFFFF;
+  --dark:      #141210;
 
-/* ── NAV ── */
-nav{position:fixed;top:0;left:0;right:0;z-index:900;display:flex;align-items:center;justify-content:space-between;padding:22px 56px;background:rgba(245,242,236,0.92);backdrop-filter:blur(8px);border-bottom:1px solid rgba(26,22,18,0.08)}
-.nav-logo{font-family:'Noto Serif TC',serif;font-weight:900;font-size:15px;letter-spacing:4px;color:#1A1612;text-decoration:none}
-.nav-links{display:flex;gap:32px;align-items:center}
-.nav-links a{font-size:12px;letter-spacing:2px;text-transform:uppercase;color:#1A1612;text-decoration:none;opacity:.5;transition:opacity .2s}
-.nav-links a:hover{opacity:1}
-.nav-line-btn{background:#1A1612!important;color:#F5F2EC!important;padding:10px 22px!important;opacity:1!important;letter-spacing:1.5px!important}
-.nav-line-btn:hover{background:#C8A87A!important;color:#1A1612!important}
+  --max:       1160px;
+  --gutter:    clamp(24px, 5vw, 80px);
 
-/* ── HERO ── */
-.hero{min-height:100vh;display:grid;grid-template-columns:1fr 1fr;padding-top:80px}
-.hero-left{display:flex;flex-direction:column;justify-content:flex-end;padding:80px 56px 80px 72px}
-.hero-eyebrow{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:3px;color:#C8A87A;margin-bottom:28px;display:flex;align-items:center;gap:14px}
-.hero-eyebrow::before{content:'';display:block;width:28px;height:1px;background:#C8A87A}
-.hero-h1{font-family:'Noto Serif TC',serif;font-weight:200;font-size:clamp(56px,6.5vw,96px);line-height:.92;letter-spacing:-1px;color:#1A1612}
-.hero-h1 b{font-weight:900}
-.hero-h1 em{font-style:normal;color:#C8A87A}
-.hero-sub{margin-top:36px;font-size:15px;line-height:1.9;color:#6B6157;max-width:380px;margin-bottom:44px}
-.hero-right{position:relative;overflow:hidden;background:#1A1612}
-.hero-right img{width:100%;height:100%;object-fit:cover;opacity:.7;filter:contrast(1.05) saturate(.85)}
-.hero-right-tag{position:absolute;top:36px;left:36px;z-index:2;border:1px solid rgba(200,168,122,.5);padding:10px 18px;font-family:'Space Mono',monospace;font-size:10px;letter-spacing:2px;color:#C8A87A;background:rgba(26,22,18,.4);backdrop-filter:blur(4px)}
-.hero-right-label{position:absolute;bottom:36px;right:36px;z-index:2;font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px;color:rgba(245,242,236,.4);text-transform:uppercase;writing-mode:vertical-rl}
+  --sans:      'Noto Sans TC', sans-serif;
+  --serif:     'Noto Serif TC', serif;
+  --mono:      'Space Mono', monospace;
 
-/* CTA */
-.cta-row{display:flex;align-items:center;gap:24px;flex-wrap:wrap}
-.btn-solid{display:inline-flex;align-items:center;gap:12px;background:#1A1612;color:#F5F2EC;padding:15px 32px;font-size:13px;letter-spacing:1.5px;text-transform:uppercase;text-decoration:none;font-weight:700;font-family:'Noto Sans TC',sans-serif;transition:background .25s;border:none;cursor:pointer}
-.btn-solid:hover{background:#C8A87A;color:#1A1612}
-.btn-txt{font-size:12px;letter-spacing:1px;color:#1A1612;text-decoration:none;border-bottom:1px solid rgba(26,22,18,.3);padding-bottom:2px;transition:border-color .2s,color .2s;font-family:'Noto Sans TC',sans-serif}
-.btn-txt:hover{color:#C8A87A;border-color:#C8A87A}
+  --ease:      cubic-bezier(.4,0,.2,1);
+}
 
-/* ── MARQUEE ── */
-.mq-bar{background:#1A1612;padding:13px 0;overflow:hidden;white-space:nowrap}
-.mq-inner{display:inline-flex;animation:mq 20s linear infinite}
-.mq-inner span{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:3px;color:rgba(245,242,236,.35);padding:0 36px;border-right:1px solid rgba(245,242,236,.1)}
-@keyframes mq{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+/* ════════════════════════════════════════
+   BASE
+   ════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
+body { font-family: var(--sans); background: var(--cream); color: var(--ink); overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+img { display: block; max-width: 100%; }
 
-/* ── STATS ── */
-.stats-row{display:grid;grid-template-columns:repeat(3,1fr);border-bottom:1px solid #E0DAD0}
-.stat-cell{padding:56px 56px;border-right:1px solid #E0DAD0}
-.stat-cell:last-child{border-right:none}
-.stat-num{font-family:'Noto Serif TC',serif;font-weight:200;font-size:clamp(44px,4.5vw,68px);color:#1A1612;line-height:1;margin-bottom:8px}
-.stat-lbl{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:#9E9080}
+/* ── Scroll reveal ── */
+.rv { opacity: 0; transform: translateY(24px); transition: opacity .6s var(--ease), transform .6s var(--ease); }
+.rv.in { opacity: 1; transform: none; }
 
-/* ── CASES ── */
-.cases-header{display:flex;align-items:flex-end;justify-content:space-between;padding:80px 72px 52px;border-bottom:1px solid #E0DAD0}
-.section-kicker{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:3px;color:#C8A87A;margin-bottom:14px}
-.section-h{font-family:'Noto Serif TC',serif;font-weight:200;font-size:clamp(30px,3.2vw,48px);color:#1A1612;line-height:1.1}
-.case-grid{display:grid;grid-template-columns:repeat(3,1fr)}
-.case-item{border-right:1px solid #E0DAD0;border-bottom:1px solid #E0DAD0;overflow:hidden;transition:background .3s;cursor:default}
-.case-item:last-child{border-right:none}
-.case-item:hover{background:#1A1612}
-.case-img{height:240px;overflow:hidden;background:#2A2420;display:flex;align-items:center;justify-content:center}
-.case-img img{width:100%;height:100%;object-fit:cover;opacity:.72;filter:saturate(.7) contrast(1.1);transition:opacity .4s,transform .5s}
-.case-item:hover .case-img img{opacity:.4;transform:scale(1.04)}
-.case-body{padding:32px 36px 40px}
-.case-idx{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:2px;color:#C8A87A;margin-bottom:18px;display:block}
-.case-big{font-family:'Noto Serif TC',serif;font-weight:900;font-size:52px;color:#1A1612;line-height:1;margin-bottom:10px;transition:color .3s}
-.case-item:hover .case-big{color:#C8A87A}
-.case-t{font-size:15px;font-weight:700;color:#1A1612;margin-bottom:8px;transition:color .3s}
-.case-d{font-size:13px;line-height:1.8;color:#6B6157;transition:color .3s}
-.case-item:hover .case-t,.case-item:hover .case-d{color:#F5F2EC}
-.case-arr{display:inline-flex;align-items:center;gap:8px;margin-top:20px;font-family:'Space Mono',monospace;font-size:10px;letter-spacing:2px;color:#C8A87A;transition:gap .25s}
-.case-item:hover .case-arr{gap:16px}
-.case3-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#1A1612,#2C2018);font-size:72px;opacity:.25}
+/* ════════════════════════════════════════
+   LAYOUT HELPERS
+   ════════════════════════════════════════ */
+.container { max-width: var(--max); margin: 0 auto; padding: 0 var(--gutter); }
+.section { padding: 96px 0; }
+.section-sm { padding: 64px 0; }
 
-/* ── TESTIMONIALS ── */
-.testi-wrap{display:grid;grid-template-columns:340px 1fr;border-top:1px solid #E0DAD0}
-.testi-left{padding:80px 48px;background:#1A1612;color:#F5F2EC;display:flex;flex-direction:column;justify-content:space-between}
-.testi-left-h{font-family:'Noto Serif TC',serif;font-weight:200;font-size:34px;line-height:1.2;margin-bottom:24px}
-.testi-left-q{font-family:'Noto Serif TC',serif;font-size:100px;line-height:.7;color:rgba(200,168,122,.2);margin-bottom:12px}
-.testi-right{}
-.testi-item{padding:48px 56px;border-bottom:1px solid #E0DAD0;transition:background .25s}
-.testi-item:last-child{border-bottom:none}
-.testi-item:hover{background:#EDEAE4}
-.testi-ss{margin-bottom:20px;border-radius:6px;overflow:hidden;display:inline-block;box-shadow:0 2px 16px rgba(0,0,0,.1)}
-.testi-ss img{display:block;max-height:260px;max-width:260px;object-fit:contain}
-.testi-body{font-family:'Noto Serif TC',serif;font-size:18px;font-weight:300;line-height:1.8;color:#1A1612;margin-bottom:18px;border-left:2px solid #C8A87A;padding-left:18px}
-.testi-by{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:2px;color:#9E9080;text-transform:uppercase}
+/* ── Section label ── */
+.kicker {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--gold);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.kicker::before {
+  content: '';
+  width: 24px;
+  height: 1px;
+  background: var(--gold);
+  flex-shrink: 0;
+}
 
-/* ── PROCESS ── */
-.process{padding:96px 72px;background:#F5F2EC;border-top:1px solid #E0DAD0}
-.proc-grid{display:grid;grid-template-columns:repeat(4,1fr);margin-top:60px;gap:0}
-.proc-step{padding-right:40px;border-right:1px solid #E0DAD0}
-.proc-step:last-child{border-right:none}
-.proc-n{font-family:'Space Mono',monospace;font-size:52px;color:#E4DED4;line-height:1;margin-bottom:20px}
-.proc-t{font-size:15px;font-weight:700;color:#1A1612;margin-bottom:10px}
-.proc-d{font-size:13px;line-height:1.8;color:#6B6157}
+/* ── Section heading ── */
+.section-title {
+  font-family: var(--serif);
+  font-weight: 200;
+  font-size: clamp(28px, 3.2vw, 44px);
+  line-height: 1.25;
+  color: var(--ink);
+}
+.section-title b { font-weight: 700; }
+.section-title.light { color: var(--white); }
+.section-desc {
+  font-size: 15px;
+  line-height: 1.85;
+  color: var(--ink-mid);
+  max-width: 480px;
+}
+.section-desc.light { color: rgba(255,255,255,.55); }
 
-/* ── FINAL CTA ── */
-.fcta{background:#1A1612;display:grid;grid-template-columns:1fr 1fr;min-height:440px}
-.fcta-l{padding:88px 72px;border-right:1px solid rgba(245,242,236,.08);display:flex;flex-direction:column;justify-content:space-between}
-.fcta-h{font-family:'Noto Serif TC',serif;font-weight:200;font-size:clamp(28px,2.8vw,48px);color:#F5F2EC;line-height:1.1;margin-bottom:28px}
-.fcta-h b{font-weight:900;color:#C8A87A}
-.fcta-sub{font-size:14px;color:rgba(245,242,236,.4);line-height:1.9;max-width:300px}
-.fcta-svcs{margin-top:36px}
-.fcta-svc{padding:12px 0;border-bottom:1px solid rgba(245,242,236,.07);font-size:13px;color:rgba(245,242,236,.45);display:flex;align-items:center;gap:12px}
-.fcta-svc::before{content:'';display:block;width:4px;height:4px;border-radius:50%;background:#C8A87A;flex-shrink:0}
-.fcta-r{padding:88px 72px;display:flex;flex-direction:column;justify-content:space-between}
-.line-btn{display:inline-flex;align-items:center;gap:14px;background:#06C755;color:#fff;padding:20px 40px;font-size:16px;font-weight:700;text-decoration:none;font-family:'Noto Sans TC',sans-serif;transition:background .25s;width:fit-content}
-.line-btn:hover{background:#04A844}
-.line-btn svg{width:22px;height:22px;flex-shrink:0}
-.fcta-note{margin-top:14px;font-family:'Space Mono',monospace;font-size:10px;letter-spacing:1px;color:rgba(245,242,236,.25)}
-.fcta-contact{border-top:1px solid rgba(245,242,236,.08);padding-top:36px}
-.fcta-contact-lbl{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px;color:rgba(245,242,236,.28);margin-bottom:10px}
-.fcta-contact a{font-family:'Space Mono',monospace;font-size:13px;letter-spacing:1px;color:#C8A87A;text-decoration:none}
-.fcta-contact a:hover{color:#F0D98A}
+/* ── Buttons ── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  text-decoration: none;
+  padding: 14px 32px;
+  transition: background .25s var(--ease), color .25s var(--ease);
+  cursor: pointer;
+  border: none;
+}
+.btn-dark { background: var(--ink); color: var(--cream); }
+.btn-dark:hover { background: var(--gold); color: var(--ink); }
+.btn-outline { background: transparent; color: var(--white); border: 1px solid rgba(255,255,255,.35); }
+.btn-outline:hover { background: rgba(255,255,255,.1); border-color: var(--white); }
+.btn-line { background: #06C755; color: #fff; gap: 12px; font-size: 15px; padding: 16px 36px; }
+.btn-line:hover { background: #05B34B; }
+.btn-line svg { width: 20px; height: 20px; flex-shrink: 0; }
+.btn-ghost-ink {
+  font-size: 13px;
+  color: var(--ink-mid);
+  text-decoration: none;
+  letter-spacing: .5px;
+  padding-bottom: 2px;
+  border-bottom: 1px solid var(--cream-dk);
+  transition: color .2s, border-color .2s;
+}
+.btn-ghost-ink:hover { color: var(--gold); border-color: var(--gold); }
 
-/* ── FOOTER ── */
-footer{background:#0E0C09;padding:28px 72px;display:flex;align-items:center;justify-content:space-between}
-footer p{font-size:11px;color:rgba(245,242,236,.28);letter-spacing:.5px}
-footer a{font-family:'Space Mono',monospace;font-size:11px;color:#C8A87A;text-decoration:none}
+/* ════════════════════════════════════════
+   NAV
+   ════════════════════════════════════════ */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 800;
+  background: rgba(248,245,239,.96);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--cream-dk);
+}
+.nav-inner {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 0 var(--gutter);
+  height: 68px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.nav-logo {
+  font-family: var(--serif);
+  font-weight: 900;
+  font-size: 14px;
+  letter-spacing: 5px;
+  color: var(--ink);
+  text-decoration: none;
+  user-select: none;
+}
+.nav-menu { display: flex; align-items: center; gap: 8px; }
+.nav-menu a {
+  font-size: 12px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--ink-mid);
+  text-decoration: none;
+  padding: 8px 14px;
+  transition: color .2s;
+}
+.nav-menu a:hover { color: var(--ink); }
+.nav-cta {
+  background: var(--ink) !important;
+  color: var(--cream) !important;
+  padding: 10px 22px !important;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+.nav-cta:hover { background: var(--gold) !important; color: var(--ink) !important; }
 
-/* ── ADMIN ── */
-#adm-btn{display:none!important}
-/* ── PASSWORD MODAL ── */
-#pw-overlay{display:none;position:fixed;inset:0;z-index:99990;background:rgba(26,22,18,.7);backdrop-filter:blur(6px);align-items:center;justify-content:center}
-#pw-overlay.open{display:flex}
-#pw-box{background:#fff;padding:44px 40px;width:340px;position:relative}
-#pw-box h3{font-family:'Noto Serif TC',serif;font-weight:200;font-size:22px;color:#1A1612;margin-bottom:6px;letter-spacing:1px}
-#pw-box p{font-size:12px;color:#AAA;margin-bottom:28px;font-family:'Space Mono',monospace;letter-spacing:1px}
-#pw-input{width:100%;padding:12px 14px;border:1px solid #E4DED6;border-bottom:2px solid #1A1612;border-radius:0;font-size:15px;font-family:'Space Mono',monospace;letter-spacing:3px;color:#1A1612;background:#FDFBF8;outline:none;transition:border-color .2s}
-#pw-input:focus{border-bottom-color:#C8A87A}
-#pw-input.shake{animation:shake .35s ease}
-@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-6px)}80%{transform:translateX(6px)}}
-#pw-submit{width:100%;margin-top:16px;padding:13px;background:#1A1612;color:#F5F2EC;border:none;font-size:13px;font-weight:700;letter-spacing:2px;cursor:pointer;font-family:'Noto Sans TC',sans-serif;transition:background .2s}
-#pw-submit:hover{background:#C8A87A;color:#1A1612}
-#pw-err{font-size:11px;color:#C0392B;margin-top:10px;min-height:16px;font-family:'Space Mono',monospace;letter-spacing:.5px;opacity:0;transition:opacity .2s}
-#pw-err.show{opacity:1}
-#pw-close{position:absolute;top:14px;right:16px;background:none;border:none;font-size:20px;color:#CCC;cursor:pointer;line-height:1;padding:4px}
-#pw-close:hover{color:#1A1612}
-#adm-panel{display:none;position:fixed;top:0;right:0;width:380px;height:100vh;background:#fff;border-left:1px solid #E8E2D8;z-index:9980;overflow-y:auto;padding:28px 24px;font-family:'Noto Sans TC',sans-serif}
-#adm-panel.open{display:block}
-.ap-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:28px;padding-bottom:16px;border-bottom:1px solid #EDEAE4}
-.ap-top h2{font-size:14px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#1A1612}
-.ap-x{background:none;border:none;font-size:22px;cursor:pointer;color:#AAA;line-height:1;padding:0}
-.ap-sec{margin-bottom:24px;padding-bottom:24px;border-bottom:1px solid #F0EDE8}
-.ap-sec:last-of-type{border-bottom:none}
-.ap-lbl{font-size:9px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#C8A87A;margin-bottom:12px;display:block}
-.ap-f{margin-bottom:10px}
-.ap-f label{display:block;font-size:11px;color:#999;margin-bottom:3px}
-.ap-f input,.ap-f textarea{width:100%;padding:8px 10px;border:1px solid #E4DED6;border-radius:4px;font-size:13px;font-family:'Noto Sans TC',sans-serif;color:#1A1612;background:#FDFBF8;transition:border-color .2s;resize:vertical}
-.ap-f input:focus,.ap-f textarea:focus{outline:none;border-color:#C8A87A}
-.ap-f textarea{min-height:65px}
-.up-z{border:1.5px dashed #D8D2C8;border-radius:6px;padding:16px;text-align:center;cursor:pointer;background:#FDFBF8;transition:all .2s;margin-top:4px}
-.up-z:hover{border-color:#C8A87A;background:#FBF8F3}
-.up-z .up-ico{font-size:20px;display:block;margin-bottom:4px}
-.up-z .up-hint{font-size:11px;color:#BBB}
-.up-z input[type=file]{display:none}
-.up-prev{max-width:100%;max-height:90px;border-radius:4px;object-fit:cover;margin-top:8px;display:none;border:1px solid #E4DED6}
-.ap-btn{width:100%;padding:12px;background:#1A1612;color:#F5F2EC;border:none;border-radius:4px;font-size:13px;font-weight:700;letter-spacing:1px;cursor:pointer;font-family:'Noto Sans TC',sans-serif;transition:background .2s;margin-top:6px}
-.ap-btn:hover{background:#C8A87A;color:#1A1612}
-.ap-btn.ghost{background:transparent;color:#999;border:1px solid #E4DED6;margin-top:4px}
-.ap-btn.ghost:hover{background:#F5F2EC;color:#1A1612}
-.toast{position:fixed;bottom:90px;right:28px;background:#1A1612;color:#F5F2EC;font-size:12px;letter-spacing:1px;padding:10px 22px;border-radius:2px;z-index:99999;opacity:0;pointer-events:none;transition:opacity .3s;font-family:'Space Mono',monospace}
-.toast.show{opacity:1}
+/* ════════════════════════════════════════
+   HERO
+   ════════════════════════════════════════ */
+.hero {
+  min-height: 100vh;
+  padding-top: 68px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+.hero-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 80px var(--gutter) 80px 0;
+  padding-left: max(var(--gutter), calc((100vw - var(--max)) / 2 + var(--gutter)));
+}
+.hero-tag {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: var(--gold);
+  margin-bottom: 32px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.hero-tag::before { content: ''; width: 24px; height: 1px; background: var(--gold); }
+.hero-h1 {
+  font-family: var(--serif);
+  font-size: clamp(44px, 5.5vw, 80px);
+  font-weight: 200;
+  line-height: 1.1;
+  letter-spacing: -0.5px;
+  color: var(--ink);
+  margin-bottom: 24px;
+}
+.hero-h1 b { font-weight: 900; display: block; }
+.hero-h1 em { font-style: normal; color: var(--gold); }
+.hero-sub {
+  font-size: 16px;
+  line-height: 1.85;
+  color: var(--ink-mid);
+  max-width: 420px;
+  margin-bottom: 48px;
+}
+.hero-btns { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+.hero-img {
+  position: relative;
+  background: var(--dark);
+  overflow: hidden;
+}
+.hero-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: .72;
+  filter: saturate(.8) contrast(1.05);
+}
+.hero-img-badge {
+  position: absolute;
+  bottom: 36px;
+  left: 36px;
+  background: rgba(20,18,16,.7);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(184,154,90,.35);
+  padding: 12px 20px;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: var(--gold-lt);
+}
 
-/* ── REVEAL ── */
-.rv{opacity:0;transform:translateY(28px);transition:opacity .65s ease,transform .65s ease}
-.rv.in{opacity:1;transform:translateY(0)}
+/* ════════════════════════════════════════
+   TICKER
+   ════════════════════════════════════════ */
+.ticker {
+  background: var(--ink);
+  padding: 12px 0;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.ticker-inner {
+  display: inline-flex;
+  animation: tick 22s linear infinite;
+}
+.ticker-inner span {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: rgba(248,245,239,.3);
+  padding: 0 32px;
+  border-right: 1px solid rgba(255,255,255,.08);
+}
+@keyframes tick { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
 
-/* ── RESPONSIVE ── */
-@media(max-width:860px){
-  nav{padding:18px 24px}
-  .hero{grid-template-columns:1fr;padding-top:70px}
-  .hero-left{padding:48px 24px 32px}
-  .hero-right{height:360px}
-  .stats-row{grid-template-columns:1fr}
-  .stat-cell{border-right:none;border-bottom:1px solid #E0DAD0;padding:36px 28px}
-  .cases-header{flex-direction:column;align-items:flex-start;padding:56px 28px 40px;gap:16px}
-  .case-grid{grid-template-columns:1fr}
-  .case-item{border-right:none}
-  .testi-wrap{grid-template-columns:1fr}
-  .testi-left{padding:56px 28px}
-  .testi-item{padding:36px 28px}
-  .process{padding:64px 28px}
-  .proc-grid{grid-template-columns:1fr 1fr;gap:36px}
-  .proc-step{border-right:none;padding-right:0}
-  .fcta{grid-template-columns:1fr}
-  .fcta-l,.fcta-r{padding:64px 28px;border-right:none}
-  footer{flex-direction:column;gap:12px;text-align:center;padding:24px}
-  #adm-panel{width:100%}
+/* ════════════════════════════════════════
+   STATS
+   ════════════════════════════════════════ */
+.stats { background: var(--white); border-bottom: 1px solid var(--cream-dk); }
+.stats-inner {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 0 var(--gutter);
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  divide-x: 1px solid var(--cream-dk);
+}
+.stat-item {
+  padding: 52px 0;
+  text-align: center;
+  border-right: 1px solid var(--cream-dk);
+}
+.stat-item:last-child { border-right: none; }
+.stat-num {
+  font-family: var(--serif);
+  font-weight: 200;
+  font-size: clamp(40px, 4.5vw, 64px);
+  color: var(--ink);
+  line-height: 1;
+  margin-bottom: 8px;
+}
+.stat-lbl {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+/* ════════════════════════════════════════
+   ABOUT / INTRO
+   ════════════════════════════════════════ */
+.intro { background: var(--cream); }
+.intro-inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: center;
+}
+.intro-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 36px;
+}
+.tag {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: var(--gold);
+  border: 1px solid rgba(184,154,90,.35);
+  padding: 7px 16px;
+  background: rgba(184,154,90,.06);
+}
+.intro-cards { display: flex; flex-direction: column; gap: 16px; }
+.intro-card {
+  background: var(--white);
+  border: 1px solid var(--cream-dk);
+  padding: 28px 32px;
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+  transition: border-color .25s, box-shadow .25s;
+}
+.intro-card:hover {
+  border-color: rgba(184,154,90,.4);
+  box-shadow: 0 4px 24px rgba(184,154,90,.08);
+}
+.intro-card-ico {
+  font-size: 28px;
+  line-height: 1;
+  flex-shrink: 0;
+  width: 48px;
+  text-align: center;
+}
+.intro-card-body h4 {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 6px;
+}
+.intro-card-body p {
+  font-size: 13px;
+  line-height: 1.75;
+  color: var(--ink-mid);
+}
+
+/* ════════════════════════════════════════
+   CASES
+   ════════════════════════════════════════ */
+.cases { background: var(--white); }
+.cases-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 48px;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+.cases-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+.case-card {
+  background: var(--cream);
+  border: 1px solid var(--cream-dk);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: transform .3s var(--ease), box-shadow .3s var(--ease);
+}
+.case-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 48px rgba(28,24,18,.1);
+}
+.case-card-img {
+  height: 220px;
+  overflow: hidden;
+  background: var(--dark);
+  position: relative;
+}
+.case-card-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: .75;
+  filter: saturate(.8);
+  transition: transform .5s var(--ease), opacity .3s;
+}
+.case-card:hover .case-card-img img { transform: scale(1.04); opacity: .85; }
+.case-card-badge {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  background: var(--gold);
+  color: var(--ink);
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 2px;
+  padding: 5px 12px;
+}
+.case-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #1C1812, #2C2416);
+  font-size: 64px;
+  opacity: .2;
+}
+.case-card-body { padding: 28px 28px 32px; }
+.case-num {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: var(--gold);
+  margin-bottom: 14px;
+}
+.case-metric {
+  font-family: var(--serif);
+  font-size: 48px;
+  font-weight: 900;
+  color: var(--ink);
+  line-height: 1;
+  margin-bottom: 8px;
+}
+.case-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 8px;
+}
+.case-desc {
+  font-size: 13px;
+  line-height: 1.75;
+  color: var(--ink-mid);
+}
+
+/* ════════════════════════════════════════
+   TESTIMONIALS
+   ════════════════════════════════════════ */
+.testi { background: var(--dark); }
+.testi-top {
+  text-align: center;
+  margin-bottom: 64px;
+}
+.testi-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+.testi-card {
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 12px;
+  padding: 32px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  transition: background .25s, border-color .25s;
+}
+.testi-card:hover {
+  background: rgba(255,255,255,.07);
+  border-color: rgba(184,154,90,.3);
+}
+.testi-card-img {
+  border-radius: 8px;
+  overflow: hidden;
+  background: rgba(255,255,255,.06);
+}
+.testi-card-img img {
+  width: 100%;
+  max-height: 240px;
+  object-fit: contain;
+}
+.testi-quote {
+  font-family: var(--serif);
+  font-size: 15px;
+  font-weight: 300;
+  line-height: 1.85;
+  color: rgba(248,245,239,.8);
+  border-left: 2px solid var(--gold);
+  padding-left: 16px;
+  flex: 1;
+}
+.testi-who {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  color: var(--gold);
+}
+
+/* ════════════════════════════════════════
+   PROCESS
+   ════════════════════════════════════════ */
+.process { background: var(--cream); }
+.proc-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  margin-top: 60px;
+  border-top: 1px solid var(--cream-dk);
+}
+.proc-item {
+  padding: 40px 36px 40px 0;
+  border-right: 1px solid var(--cream-dk);
+  padding-right: 36px;
+}
+.proc-item:first-child { padding-left: 0; }
+.proc-item:last-child { border-right: none; }
+.proc-n {
+  font-family: var(--mono);
+  font-size: 44px;
+  color: var(--cream-dk);
+  line-height: 1;
+  margin-bottom: 20px;
+}
+.proc-t {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 10px;
+}
+.proc-d {
+  font-size: 13px;
+  line-height: 1.8;
+  color: var(--ink-mid);
+}
+
+/* ════════════════════════════════════════
+   CTA SECTION
+   ════════════════════════════════════════ */
+.cta-section {
+  background: var(--ink);
+  position: relative;
+  overflow: hidden;
+}
+.cta-section::before {
+  content: '';
+  position: absolute;
+  top: -120px; right: -120px;
+  width: 480px; height: 480px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(184,154,90,.08) 0%, transparent 70%);
+}
+.cta-inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: center;
+}
+.cta-left h2 {
+  font-family: var(--serif);
+  font-weight: 200;
+  font-size: clamp(28px, 3vw, 44px);
+  line-height: 1.2;
+  color: var(--white);
+  margin-bottom: 16px;
+}
+.cta-left h2 b { font-weight: 900; color: var(--gold-lt); }
+.cta-right {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+.cta-services {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.cta-svc {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 0;
+  border-bottom: 1px solid rgba(255,255,255,.07);
+  font-size: 14px;
+  color: rgba(255,255,255,.55);
+}
+.cta-svc::before { content: ''; width: 4px; height: 4px; border-radius: 50%; background: var(--gold); flex-shrink: 0; }
+.cta-line-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.cta-note {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 1px;
+  color: rgba(255,255,255,.22);
+}
+
+/* ════════════════════════════════════════
+   FOOTER
+   ════════════════════════════════════════ */
+footer {
+  background: #0C0A08;
+  padding: 28px 0;
+  border-top: 1px solid rgba(255,255,255,.06);
+}
+.footer-inner {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 0 var(--gutter);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+footer p { font-size: 11px; color: rgba(255,255,255,.25); letter-spacing: .3px; }
+footer a { font-family: var(--mono); font-size: 11px; color: var(--gold); text-decoration: none; }
+footer a:hover { color: var(--gold-lt); }
+
+/* ════════════════════════════════════════
+   ADMIN
+   ════════════════════════════════════════ */
+.toast {
+  position: fixed;
+  bottom: 28px; right: 28px;
+  background: var(--ink);
+  color: var(--cream);
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 1px;
+  padding: 12px 24px;
+  border-left: 3px solid var(--gold);
+  z-index: 99999;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .3s;
+}
+.toast.show { opacity: 1; }
+
+/* Password modal */
+#pw-overlay {
+  display: none;
+  position: fixed; inset: 0; z-index: 99990;
+  background: rgba(20,18,16,.75);
+  backdrop-filter: blur(8px);
+  align-items: center; justify-content: center;
+}
+#pw-overlay.open { display: flex; }
+#pw-box {
+  background: var(--white);
+  width: 360px;
+  padding: 48px 40px;
+  position: relative;
+}
+#pw-box h3 {
+  font-family: var(--serif);
+  font-weight: 300;
+  font-size: 22px;
+  color: var(--ink);
+  margin-bottom: 6px;
+}
+#pw-box p {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 1px;
+  color: var(--ink-soft);
+  margin-bottom: 28px;
+}
+#pw-close {
+  position: absolute; top: 16px; right: 18px;
+  background: none; border: none;
+  font-size: 22px; color: #CCC; cursor: pointer; line-height: 1; padding: 2px;
+}
+#pw-close:hover { color: var(--ink); }
+#pw-input {
+  width: 100%; padding: 13px 14px;
+  border: none; border-bottom: 2px solid var(--ink);
+  font-family: var(--mono); font-size: 15px; letter-spacing: 3px;
+  color: var(--ink); background: #FAFAF8; outline: none;
+  transition: border-color .2s;
+}
+#pw-input:focus { border-bottom-color: var(--gold); }
+#pw-input.shake { animation: shake .38s ease; }
+@keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-8px)} 75%{transform:translateX(8px)} }
+#pw-submit {
+  width: 100%; margin-top: 18px; padding: 14px;
+  background: var(--ink); color: var(--cream); border: none;
+  font-family: var(--sans); font-size: 13px; font-weight: 700;
+  letter-spacing: 2px; cursor: pointer; transition: background .2s;
+}
+#pw-submit:hover { background: var(--gold); color: var(--ink); }
+#pw-err {
+  font-family: var(--mono); font-size: 11px; color: #B0392B;
+  margin-top: 10px; opacity: 0; transition: opacity .2s; min-height: 18px;
+}
+#pw-err.show { opacity: 1; }
+
+/* Admin panel */
+#adm-panel {
+  display: none;
+  position: fixed; top: 0; right: 0;
+  width: 400px; height: 100vh;
+  background: var(--white);
+  border-left: 1px solid var(--cream-dk);
+  z-index: 9980;
+  overflow: hidden;
+  flex-direction: column;
+}
+#adm-panel.open { display: flex; }
+.ap-top {
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--cream-dk);
+  display: flex; align-items: center; justify-content: space-between;
+  flex-shrink: 0;
+  background: var(--white);
+}
+.ap-top-label {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--ink);
+  font-weight: 700;
+}
+.ap-x {
+  background: none; border: none;
+  font-size: 22px; color: #BBB; cursor: pointer; line-height: 1;
+}
+.ap-x:hover { color: var(--ink); }
+.ap-body {
+  flex: 1; overflow-y: auto;
+  padding: 24px;
+  display: flex; flex-direction: column; gap: 0;
+}
+.ap-sec {
+  padding-bottom: 24px;
+  margin-bottom: 24px;
+  border-bottom: 1px solid var(--cream-dk);
+}
+.ap-sec:last-of-type { border-bottom: none; }
+.ap-lbl {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 14px;
+  display: block;
+}
+.ap-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.ap-f { margin-bottom: 10px; }
+.ap-f label { display: block; font-size: 11px; color: #999; margin-bottom: 3px; }
+.ap-f input, .ap-f textarea {
+  width: 100%; padding: 8px 10px;
+  border: 1px solid var(--cream-dk); border-radius: 4px;
+  font-size: 13px; font-family: var(--sans);
+  color: var(--ink); background: #FDFBF8;
+  transition: border-color .2s; resize: vertical;
+}
+.ap-f input:focus, .ap-f textarea:focus { outline: none; border-color: var(--gold); }
+.ap-f textarea { min-height: 64px; }
+.up-z {
+  border: 1.5px dashed var(--cream-dk);
+  border-radius: 6px; padding: 14px 12px;
+  text-align: center; cursor: pointer;
+  background: #FDFBF8; transition: all .2s;
+  font-size: 12px; color: var(--ink-soft);
+  margin-top: 4px;
+}
+.up-z:hover { border-color: var(--gold); color: var(--gold); background: #FBF8F2; }
+.up-z input[type=file] { display: none; }
+.up-prev { max-width:100%; max-height:80px; border-radius:4px; object-fit:cover; margin-top:8px; display:none; border:1px solid var(--cream-dk); }
+.ap-btn {
+  width: 100%; padding: 12px; margin-top: 8px;
+  background: var(--ink); color: var(--cream); border: none; border-radius: 4px;
+  font-family: var(--sans); font-size: 13px; font-weight: 700; letter-spacing: 1px;
+  cursor: pointer; transition: background .2s;
+}
+.ap-btn:hover { background: var(--gold); color: var(--ink); }
+.ap-btn.ghost {
+  background: transparent; color: var(--ink-soft);
+  border: 1px solid var(--cream-dk);
+}
+.ap-btn.ghost:hover { background: var(--cream); color: var(--ink); }
+
+/* ════════════════════════════════════════
+   RESPONSIVE
+   ════════════════════════════════════════ */
+@media (max-width: 900px) {
+  .hero { grid-template-columns: 1fr; }
+  .hero-content { padding: 56px var(--gutter); }
+  .hero-img { height: 380px; }
+  .stats-inner { grid-template-columns: 1fr; }
+  .stat-item { border-right: none; border-bottom: 1px solid var(--cream-dk); text-align: left; padding: 36px 0; }
+  .intro-inner { grid-template-columns: 1fr; gap: 48px; }
+  .cases-grid { grid-template-columns: 1fr; }
+  .testi-grid { grid-template-columns: 1fr; }
+  .proc-grid { grid-template-columns: 1fr 1fr; gap: 36px; border-top: none; }
+  .proc-item { border-right: none; padding-right: 0; padding-left: 0; border-top: 1px solid var(--cream-dk); }
+  .cta-inner { grid-template-columns: 1fr; gap: 48px; }
+  #adm-panel { width: 100%; }
+  .footer-inner { flex-direction: column; gap: 10px; text-align: center; }
+}
+@media (max-width: 560px) {
+  .proc-grid { grid-template-columns: 1fr; }
+  .cases-header { flex-direction: column; align-items: flex-start; }
+  .nav-menu a:not(.nav-cta) { display: none; }
 }
 </style>
 </head>
 <body>
 
-<!-- TOAST -->
 <div id="toast" class="toast">已套用 ✓</div>
 
 <!-- PASSWORD MODAL -->
@@ -205,145 +825,148 @@ footer a{font-family:'Space Mono',monospace;font-size:11px;color:#C8A87A;text-de
     <button id="pw-close" onclick="closePwModal()">×</button>
     <h3>管理後台</h3>
     <p>請輸入管理員密碼</p>
-    <input id="pw-input" type="password" placeholder="••••••••" autocomplete="off" onkeydown="if(event.key==='Enter')checkPw()">
-    <button id="pw-submit" onclick="checkPw()">進入</button>
-    <div id="pw-err">密碼錯誤，請再試一次</div>
+    <input id="pw-input" type="password" placeholder="••••••••" autocomplete="off"
+           onkeydown="if(event.key==='Enter')checkPw()">
+    <button id="pw-submit" onclick="checkPw()">進入後台</button>
+    <div id="pw-err">密碼錯誤，請重試</div>
   </div>
 </div>
 
 <!-- ADMIN PANEL -->
 <div id="adm-panel">
   <div class="ap-top">
-    <h2>後台管理</h2>
-    <button class="ap-x" onclick="toggleAdmin()">×</button>
+    <span class="ap-top-label">後台管理</span>
+    <button class="ap-x" onclick="document.getElementById('adm-panel').classList.remove('open')">×</button>
   </div>
+  <div class="ap-body">
 
-  <!-- HERO -->
-  <div class="ap-sec">
-    <span class="ap-lbl">首頁標題</span>
-    <div class="ap-f"><label>第一行</label><input id="e-h1" value="腦波"></div>
-    <div class="ap-f"><label>第二行（金色）</label><input id="e-h2" value="×"></div>
-    <div class="ap-f"><label>第三行</label><input id="e-h3" value="易經"></div>
-    <div class="ap-f"><label>副標語</label><textarea id="e-hs">結合現代腦波科學與千年易經智慧，為企業主與決策者提供精準方向指引</textarea></div>
-    <div class="ap-f"><label>LINE 連結</label><input type="url" id="e-line" value="https://lin.ee/SRnO1uW"></div>
-  </div>
-
-  <!-- STATS -->
-  <div class="ap-sec">
-    <span class="ap-lbl">三項統計數字</span>
-    <div class="ap-f"><label>數字 1</label><input id="e-s1n" value="500+"></div>
-    <div class="ap-f"><label>標籤 1</label><input id="e-s1l" value="諮詢客戶"></div>
-    <div class="ap-f"><label>數字 2</label><input id="e-s2n" value="92%"></div>
-    <div class="ap-f"><label>標籤 2</label><input id="e-s2l" value="客戶滿意度"></div>
-    <div class="ap-f"><label>數字 3</label><input id="e-s3n" value="8+"></div>
-    <div class="ap-f"><label>標籤 3</label><input id="e-s3l" value="執業年資"></div>
-  </div>
-
-  <!-- CASE 1 -->
-  <div class="ap-sec">
-    <span class="ap-lbl">案例 1</span>
-    <div class="ap-f"><label>大數字</label><input id="e-c1m" value="+50%"></div>
-    <div class="ap-f"><label>標題</label><input id="e-c1t" value="組織拓展 50%"></div>
-    <div class="ap-f"><label>描述</label><textarea id="e-c1d">6個月內精準布局擴張時機，帶動團隊與收入雙向成長。</textarea></div>
-    <div class="ap-f"><label>圖片上傳</label>
-      <div class="up-z" onclick="document.getElementById('up-c1').click()">
-        <span class="up-ico">↑</span><span class="up-hint">JPG / PNG</span>
-        <input type="file" id="up-c1" accept="image/*" onchange="doUpload(this,'c1-img','c1-pv')">
-      </div>
-      <img id="c1-pv" class="up-prev">
+    <div class="ap-sec">
+      <div class="ap-lbl">首頁</div>
+      <div class="ap-f"><label>主標題第一行</label><input id="e-h1" value="腦波 × 易經"></div>
+      <div class="ap-f"><label>主標題第二行（金色）</label><input id="e-h2" value="科學開運諮詢"></div>
+      <div class="ap-f"><label>副標語</label><textarea id="e-hs">結合現代腦波科學與千年易經智慧，為企業主與決策者提供精準方向指引</textarea></div>
+      <div class="ap-f"><label>LINE 連結</label><input type="url" id="e-line" value="https://lin.ee/SRnO1uW"></div>
     </div>
-  </div>
 
-  <!-- CASE 2 -->
-  <div class="ap-sec">
-    <span class="ap-lbl">案例 2</span>
-    <div class="ap-f"><label>大數字</label><input id="e-c2m" value="+20%"></div>
-    <div class="ap-f"><label>標題</label><input id="e-c2t" value="投資獲利 20%"></div>
-    <div class="ap-f"><label>描述</label><textarea id="e-c2d">結合易經卦象判斷進出場時機，穩定持續增長。</textarea></div>
-    <div class="ap-f"><label>圖片上傳</label>
-      <div class="up-z" onclick="document.getElementById('up-c2').click()">
-        <span class="up-ico">↑</span><span class="up-hint">JPG / PNG</span>
-        <input type="file" id="up-c2" accept="image/*" onchange="doUpload(this,'c2-img','c2-pv')">
+    <div class="ap-sec">
+      <div class="ap-lbl">統計數字</div>
+      <div class="ap-row">
+        <div class="ap-f"><label>數字 1</label><input id="e-s1n" value="500+"></div>
+        <div class="ap-f"><label>標籤 1</label><input id="e-s1l" value="諮詢客戶"></div>
       </div>
-      <img id="c2-pv" class="up-prev">
-    </div>
-  </div>
-
-  <!-- CASE 3 -->
-  <div class="ap-sec">
-    <span class="ap-lbl">案例 3</span>
-    <div class="ap-f"><label>大數字</label><input id="e-c3m" value="命中"></div>
-    <div class="ap-f"><label>標題</label><input id="e-c3t" value="預測命中，時常發生"></div>
-    <div class="ap-f"><label>描述</label><textarea id="e-c3d">多位企業主反饋：老師指引的關鍵轉折點，一一應驗。</textarea></div>
-    <div class="ap-f"><label>圖片上傳</label>
-      <div class="up-z" onclick="document.getElementById('up-c3').click()">
-        <span class="up-ico">↑</span><span class="up-hint">JPG / PNG</span>
-        <input type="file" id="up-c3" accept="image/*" onchange="doUpload(this,'c3-img','c3-pv')">
+      <div class="ap-row">
+        <div class="ap-f"><label>數字 2</label><input id="e-s2n" value="92%"></div>
+        <div class="ap-f"><label>標籤 2</label><input id="e-s2l" value="客戶滿意度"></div>
       </div>
-      <img id="c3-pv" class="up-prev">
-    </div>
-  </div>
-
-  <!-- TESTIMONIAL -->
-  <div class="ap-sec">
-    <span class="ap-lbl">客戶見證</span>
-    <div class="ap-f"><label>截圖上傳</label>
-      <div class="up-z" onclick="document.getElementById('up-t1').click()">
-        <span class="up-ico">↑</span><span class="up-hint">上傳對話截圖</span>
-        <input type="file" id="up-t1" accept="image/*" onchange="doUpload(this,'t1-img','t1-pv')">
+      <div class="ap-row">
+        <div class="ap-f"><label>數字 3</label><input id="e-s3n" value="8 年+"></div>
+        <div class="ap-f"><label>標籤 3</label><input id="e-s3l" value="執業年資"></div>
       </div>
-      <img id="t1-pv" class="up-prev">
     </div>
-    <div class="ap-f"><label>見證文字</label><textarea id="e-t1b">老師超準！按照建議的時間點去談合作，果然順利成交。</textarea></div>
-    <div class="ap-f"><label>姓名 / 職稱</label><input id="e-t1by" value="蔡小姐 — 科技業負責人"></div>
-    <div class="ap-f"><label>見證 2 文字</label><textarea id="e-t2b">按照老師的提示去做，果然就通了。近兩個月以 35 萬為底，穩定獲利。</textarea></div>
-    <div class="ap-f"><label>見證 2 姓名</label><input id="e-t2by" value="梨子 — 投資人"></div>
-    <div class="ap-f"><label>見證 3 文字</label><textarea id="e-t3b">氣在來，運再來。老師說的時機點，我帶動整個團隊上聘，真的成了。</textarea></div>
-    <div class="ap-f"><label>見證 3 姓名</label><input id="e-t3by" value="Aaron — 業務主管"></div>
-  </div>
 
-  <!-- CTA -->
-  <div class="ap-sec">
-    <span class="ap-lbl">CTA 區塊</span>
-    <div class="ap-f"><label>標題</label><textarea id="e-cta-t" rows="3">準備好了嗎？</textarea></div>
-    <div class="ap-f"><label>說明</label><textarea id="e-cta-s">加入 LINE 官方帳號，預約一對一諮詢，讓易經智慧為您的事業指路。</textarea></div>
-  </div>
+    <div class="ap-sec">
+      <div class="ap-lbl">案例 1</div>
+      <div class="ap-f"><label>數字</label><input id="e-c1m" value="+50%"></div>
+      <div class="ap-f"><label>標題</label><input id="e-c1t" value="組織拓展 50%"></div>
+      <div class="ap-f"><label>描述</label><textarea id="e-c1d">6 個月內精準布局擴張時機，帶動團隊與收入雙向成長。</textarea></div>
+      <div class="ap-f"><label>圖片</label>
+        <div class="up-z" onclick="document.getElementById('up-c1').click()">
+          ↑ 點擊上傳圖片
+          <input type="file" id="up-c1" accept="image/*" onchange="doUpload(this,'c1-img','c1-pv')">
+        </div>
+        <img id="c1-pv" class="up-prev">
+      </div>
+    </div>
 
-  <button class="ap-btn" onclick="applyAll()">✓ 套用所有變更</button>
-  <button class="ap-btn ghost" onclick="if(confirm('確定重新整理頁面？已上傳的圖片將遺失。'))location.reload()">↩ 還原重設</button>
+    <div class="ap-sec">
+      <div class="ap-lbl">案例 2</div>
+      <div class="ap-f"><label>數字</label><input id="e-c2m" value="+20%"></div>
+      <div class="ap-f"><label>標題</label><input id="e-c2t" value="投資獲利 20%"></div>
+      <div class="ap-f"><label>描述</label><textarea id="e-c2d">結合易經卦象判斷進出場時機，穩定持續增長。</textarea></div>
+      <div class="ap-f"><label>圖片</label>
+        <div class="up-z" onclick="document.getElementById('up-c2').click()">
+          ↑ 點擊上傳圖片
+          <input type="file" id="up-c2" accept="image/*" onchange="doUpload(this,'c2-img','c2-pv')">
+        </div>
+        <img id="c2-pv" class="up-prev">
+      </div>
+    </div>
+
+    <div class="ap-sec">
+      <div class="ap-lbl">案例 3</div>
+      <div class="ap-f"><label>數字</label><input id="e-c3m" value="命中"></div>
+      <div class="ap-f"><label>標題</label><input id="e-c3t" value="預測命中，時常發生"></div>
+      <div class="ap-f"><label>描述</label><textarea id="e-c3d">多位企業主反饋：老師指引的關鍵轉折點，一一應驗。</textarea></div>
+      <div class="ap-f"><label>圖片</label>
+        <div class="up-z" onclick="document.getElementById('up-c3').click()">
+          ↑ 點擊上傳圖片
+          <input type="file" id="up-c3" accept="image/*" onchange="doUpload(this,'c3-img-wrap','c3-pv')">
+        </div>
+        <img id="c3-pv" class="up-prev">
+      </div>
+    </div>
+
+    <div class="ap-sec">
+      <div class="ap-lbl">客戶見證</div>
+      <div class="ap-f"><label>截圖</label>
+        <div class="up-z" onclick="document.getElementById('up-t1').click()">
+          ↑ 上傳對話截圖
+          <input type="file" id="up-t1" accept="image/*" onchange="doUpload(this,'t1-img','t1-pv')">
+        </div>
+        <img id="t1-pv" class="up-prev">
+      </div>
+      <div class="ap-f"><label>見證 1 文字</label><textarea id="e-t1b">老師超準！按照建議的時間點去談合作，果然順利成交。</textarea></div>
+      <div class="ap-f"><label>見證 1 署名</label><input id="e-t1by" value="蔡小姐 · 科技業負責人"></div>
+      <div class="ap-f"><label>見證 2 文字</label><textarea id="e-t2b">按照老師的提示去做，果然就通了。近兩個月以 35 萬為底，穩定獲利。</textarea></div>
+      <div class="ap-f"><label>見證 2 署名</label><input id="e-t2by" value="梨子 · 投資人"></div>
+      <div class="ap-f"><label>見證 3 文字</label><textarea id="e-t3b">氣在來，運再來。老師說的時機點，我帶動整個團隊上聘，真的成了。</textarea></div>
+      <div class="ap-f"><label>見證 3 署名</label><input id="e-t3by" value="Aaron · 業務主管"></div>
+    </div>
+
+    <div class="ap-sec">
+      <div class="ap-lbl">聯絡區塊</div>
+      <div class="ap-f"><label>標題</label><input id="e-cta-t" value="立即預約一對一諮詢"></div>
+      <div class="ap-f"><label>說明</label><textarea id="e-cta-s">加入 LINE 官方帳號，填寫基本資料後，助理將於 24 小時內與您確認時間。</textarea></div>
+    </div>
+
+    <button class="ap-btn" onclick="applyAll()">✓ 套用所有變更</button>
+    <button class="ap-btn ghost" onclick="if(confirm('重新整理？已上傳圖片將遺失。'))location.reload()">↩ 還原重設</button>
+  </div>
 </div>
 
-<!-- NAV -->
+
+<!-- ══ NAV ════════════════════════════════════ -->
 <nav>
-  <a class="nav-logo" href="#">命理諮詢</a>
-  <div class="nav-links">
-    <a href="#cases">案例</a>
-    <a href="#testi">見證</a>
-    <a href="#process">流程</a>
-    <a class="nav-line-btn" href="https://lin.ee/SRnO1uW" target="_blank" rel="noopener" id="nav-line">立即預約</a>
+  <div class="nav-inner">
+    <a class="nav-logo" href="#">命理諮詢</a>
+    <div class="nav-menu">
+      <a href="#intro">關於服務</a>
+      <a href="#cases">成功案例</a>
+      <a href="#testi">客戶見證</a>
+      <a href="#process">流程</a>
+      <a href="https://lin.ee/SRnO1uW" target="_blank" rel="noopener" class="btn nav-cta line-target">立即預約</a>
+    </div>
   </div>
 </nav>
 
-<!-- HERO -->
+<!-- ══ HERO ══════════════════════════════════ -->
 <section class="hero">
-  <div class="hero-left">
-    <div class="hero-eyebrow">腦波科學 × 易經命理</div>
+  <div class="hero-content">
+    <div class="hero-tag">腦波科學 × 易經命理</div>
     <h1 class="hero-h1">
-      <span id="h1-l1">腦波</span><br>
-      <b><em id="h1-l2">×</em></b><br>
-      <span id="h1-l3">易經</span>
+      <span id="v-h1">腦波 × 易經</span><br>
+      <b><em id="v-h2">科學開運諮詢</em></b>
     </h1>
-    <p class="hero-sub" id="hero-sub">結合現代腦波科學與千年易經智慧，為企業主與決策者提供精準方向指引</p>
-    <div class="cta-row">
-      <a class="btn-solid" href="https://lin.ee/SRnO1uW" target="_blank" rel="noopener" id="hero-line">
+    <p class="hero-sub" id="v-hs">結合現代腦波科學與千年易經智慧，為企業主與決策者提供精準方向指引</p>
+    <div class="hero-btns">
+      <a href="https://lin.ee/SRnO1uW" target="_blank" rel="noopener" class="btn btn-dark line-target">
         預約諮詢
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
       </a>
-      <a class="btn-txt" href="#cases">查看案例</a>
+      <a href="#cases" class="btn-ghost-ink">查看案例</a>
     </div>
   </div>
-  <div class="hero-right">
-    <div class="hero-right-tag">科學 × 傳統</div>
+  <div class="hero-img">
     <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAgAAAQABAAD/wAARCAYgArwDACIAAREBAhEB/9sAQwAIBgYHBgUIBwcHCQkI
 CgwUDQwLCwwZEhMPFB0aHx4dGhwcICQuJyAiLCMcHCg3KSwwMTQ0NB8nOT04MjwuMzQy/9sAQwEJ
 CQkMCwwYDQ0YMiEcITIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIy
@@ -1957,38 +2580,95 @@ vPPfB70yxe3EttvuL7zGAKmUkRyNjkDPWr8CXLWjwfZ47XC7YtrbwPwxVd4r69a3juII4kidZHkV
 KKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAo
 oooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACii
 igAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKK
-ACiiigAooooA/9k=" alt="客戶案例">
-    <div class="hero-right-label">Enterprise Consulting</div>
+ACiiigAooooA/9k=" alt="客戶案例截圖">
+    <div class="hero-img-badge">科學 × 傳統智慧</div>
   </div>
 </section>
 
-<!-- MARQUEE -->
-<div class="mq-bar" aria-hidden="true">
-  <div class="mq-inner">
-    <span>命理諮詢</span><span>腦波評測</span><span>易經解析</span><span>商業決策</span><span>八字命盤</span><span>運勢規劃</span><span>企業策略</span><span>合夥評估</span><span>投資時機</span>
-    <span>命理諮詢</span><span>腦波評測</span><span>易經解析</span><span>商業決策</span><span>八字命盤</span><span>運勢規劃</span><span>企業策略</span><span>合夥評估</span><span>投資時機</span>
+<!-- ══ TICKER ═════════════════════════════════ -->
+<div class="ticker" aria-hidden="true">
+  <div class="ticker-inner">
+    <span>命理諮詢</span><span>腦波評測</span><span>易經解析</span><span>商業決策</span>
+    <span>八字命盤</span><span>運勢規劃</span><span>企業策略</span><span>合夥評估</span>
+    <span>命理諮詢</span><span>腦波評測</span><span>易經解析</span><span>商業決策</span>
+    <span>八字命盤</span><span>運勢規劃</span><span>企業策略</span><span>合夥評估</span>
   </div>
 </div>
 
-<!-- STATS -->
-<div class="stats-row">
-  <div class="stat-cell rv"><div class="stat-num" id="s1n">500+</div><div class="stat-lbl" id="s1l">諮詢客戶</div></div>
-  <div class="stat-cell rv"><div class="stat-num" id="s2n">92%</div><div class="stat-lbl" id="s2l">客戶滿意度</div></div>
-  <div class="stat-cell rv"><div class="stat-num" id="s3n">8+</div><div class="stat-lbl" id="s3l">執業年資</div></div>
-</div>
-
-<!-- CASES -->
-<section id="cases">
-  <div class="cases-header">
-    <div>
-      <div class="section-kicker">SUCCESS CASES</div>
-      <h2 class="section-h">真實客戶<br>真實成果</h2>
+<!-- ══ STATS ══════════════════════════════════ -->
+<div class="stats">
+  <div class="stats-inner">
+    <div class="stat-item rv">
+      <div class="stat-num" id="v-s1n">500+</div>
+      <div class="stat-lbl" id="v-s1l">諮詢客戶</div>
     </div>
-    <p style="font-size:13px;color:#9E9080;max-width:260px;line-height:1.8">以下為實際客戶回饋，成果因人而異，本服務提供方向性建議。</p>
+    <div class="stat-item rv">
+      <div class="stat-num" id="v-s2n">92%</div>
+      <div class="stat-lbl" id="v-s2l">客戶滿意度</div>
+    </div>
+    <div class="stat-item rv">
+      <div class="stat-num" id="v-s3n">8 年+</div>
+      <div class="stat-lbl" id="v-s3l">執業年資</div>
+    </div>
   </div>
-  <div class="case-grid">
-    <div class="case-item rv">
-      <div class="case-img"><img id="c1-img" src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAgAAAQABAAD/wAARCAYgArwDACIAAREBAhEB/9sAQwAIBgYHBgUIBwcHCQkI
+</div>
+
+<!-- ══ INTRO ══════════════════════════════════ -->
+<section class="section intro" id="intro">
+  <div class="container">
+    <div class="intro-inner">
+      <div class="rv">
+        <div class="kicker">關於服務</div>
+        <h2 class="section-title" style="margin-bottom:20px">為什麼選擇<br><b>腦波 × 易經？</b></h2>
+        <p class="section-desc">我們將現代腦波評測技術與千年易經命理融合，每一次諮詢都有科學依據作為基礎，再輔以傳統智慧的深度解析，給企業主真正能執行的方向建議。</p>
+        <div class="intro-tags">
+          <span class="tag">腦波頻率分析</span>
+          <span class="tag">八字命盤解析</span>
+          <span class="tag">商業決策輔助</span>
+          <span class="tag">運勢時機判斷</span>
+        </div>
+      </div>
+      <div class="intro-cards">
+        <div class="intro-card rv">
+          <div class="intro-card-ico">🧠</div>
+          <div class="intro-card-body">
+            <h4>腦波評測</h4>
+            <p>透過科學儀器分析腦波頻率，了解當前身心狀態與能量場，作為易經解讀的科學基礎。</p>
+          </div>
+        </div>
+        <div class="intro-card rv">
+          <div class="intro-card-ico">☯</div>
+          <div class="intro-card-body">
+            <h4>易經命盤解析</h4>
+            <p>依據八字命盤分析個人運勢週期，精準判斷事業、財運、合夥等重要決策的最佳時機。</p>
+          </div>
+        </div>
+        <div class="intro-card rv">
+          <div class="intro-card-ico">💡</div>
+          <div class="intro-card-body">
+            <h4>商業策略建議</h4>
+            <p>將命理洞見轉化為具體可行的商業行動方案，為企業主提供清晰的決策方向。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ CASES ══════════════════════════════════ -->
+<section class="section cases" id="cases">
+  <div class="container">
+    <div class="cases-header">
+      <div>
+        <div class="kicker">成功案例</div>
+        <h2 class="section-title"><b>真實客戶</b>，真實成果</h2>
+      </div>
+      <p style="font-size:13px;color:var(--ink-soft);max-width:240px;line-height:1.7;text-align:right">以下為實際客戶回饋，成果因人而異，諮詢提供方向性建議。</p>
+    </div>
+    <div class="cases-grid">
+      <div class="case-card rv">
+        <div class="case-card-img">
+          <img id="c1-img" src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAgAAAQABAAD/wAARCAYgArwDACIAAREBAhEB/9sAQwAIBgYHBgUIBwcHCQkI
 CgwUDQwLCwwZEhMPFB0aHx4dGhwcICQuJyAiLCMcHCg3KSwwMTQ0NB8nOT04MjwuMzQy/9sAQwEJ
 CQkMCwwYDQ0YMiEcITIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIy
 MjIyMjIy/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQA
@@ -3601,17 +4281,19 @@ vPPfB70yxe3EttvuL7zGAKmUkRyNjkDPWr8CXLWjwfZ47XC7YtrbwPwxVd4r69a3juII4kidZHkV
 KKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAo
 oooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACii
 igAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKK
-ACiiigAooooA/9k=" alt="案例一"></div>
-      <div class="case-body">
-        <span class="case-idx">01</span>
-        <div class="case-big" id="c1-metric">+50%</div>
-        <div class="case-t" id="c1-title">組織拓展 50%</div>
-        <div class="case-d" id="c1-desc">6個月內精準布局擴張時機，帶動團隊與收入雙向成長。</div>
-        <div class="case-arr">VIEW CASE →</div>
+ACiiigAooooA/9k=" alt="案例一">
+          <div class="case-card-badge">企業經營</div>
+        </div>
+        <div class="case-card-body">
+          <div class="case-num">01</div>
+          <div class="case-metric" id="v-c1m">+50%</div>
+          <div class="case-title" id="v-c1t">組織拓展 50%</div>
+          <div class="case-desc" id="v-c1d">6 個月內精準布局擴張時機，帶動團隊與收入雙向成長。</div>
+        </div>
       </div>
-    </div>
-    <div class="case-item rv">
-      <div class="case-img"><img id="c2-img" src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAgAAAQABAAD/wAARCAYgArwDACIAAREBAhEB/9sAQwAIBgYHBgUIBwcHCQkI
+      <div class="case-card rv">
+        <div class="case-card-img">
+          <img id="c2-img" src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAgAAAQABAAD/wAARCAYgArwDACIAAREBAhEB/9sAQwAIBgYHBgUIBwcHCQkI
 CgwUDQwLCwwZEhMPFB0aHx4dGhwcICQuJyAiLCMcHCg3KSwwMTQ0NB8nOT04MjwuMzQy/9sAQwEJ
 CQkMCwwYDQ0YMiEcITIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIy
 MjIyMjIy/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQA
@@ -5510,46 +6192,46 @@ fzo3v/eP50v7IqfzIPqUu5doqlvf+8fzo3v/AHj+dH9kVP5kH1OXcu0VS3v/AHj+dG9/7x/Oj+yK
 n8yD6nLuXaKpb3/vH86N7/3j+dH9kVP5kH1OXcu0VS3v/eP50b3/ALx/Oj+yKn8yD6nLuXaKpb3/
 ALx/Oje/94/nR/ZFT+ZB9Tl3LtFUt7/3j+dIWY9ST+NNZRPrJB9Tl3LbSonU5PoKrSSmQ+g9KZRX
 oYbL6dF827Omnh4wd92FFFFdxudD4O/5C8v/AFwP/oS129cR4O/5C8v/AFwP/oS129efivjXoddD
-4T//2Q==" alt="案例二"></div>
-      <div class="case-body">
-        <span class="case-idx">02</span>
-        <div class="case-big" id="c2-metric">+20%</div>
-        <div class="case-t" id="c2-title">投資獲利 20%</div>
-        <div class="case-d" id="c2-desc">結合易經卦象判斷進出場時機，穩定持續增長。</div>
-        <div class="case-arr">VIEW CASE →</div>
+4T//2Q==" alt="案例二">
+          <div class="case-card-badge">金融投資</div>
+        </div>
+        <div class="case-card-body">
+          <div class="case-num">02</div>
+          <div class="case-metric" id="v-c2m">+20%</div>
+          <div class="case-title" id="v-c2t">投資獲利 20%</div>
+          <div class="case-desc" id="v-c2d">結合易經卦象判斷進出場時機，穩定持續增長。</div>
+        </div>
       </div>
-    </div>
-    <div class="case-item rv">
-      <div class="case-img" id="c3-img-wrap">
-        <div class="case3-placeholder" id="c3-placeholder">☯</div>
-      </div>
-      <div class="case-body">
-        <span class="case-idx">03</span>
-        <div class="case-big" id="c3-metric">命中</div>
-        <div class="case-t" id="c3-title">預測命中，時常發生</div>
-        <div class="case-d" id="c3-desc">多位企業主反饋：老師指引的關鍵轉折點，一一應驗。</div>
-        <div class="case-arr">VIEW CASE →</div>
+      <div class="case-card rv">
+        <div class="case-card-img" id="c3-img-wrap">
+          <div class="case-placeholder">☯</div>
+          <div class="case-card-badge">命理預測</div>
+        </div>
+        <div class="case-card-body">
+          <div class="case-num">03</div>
+          <div class="case-metric" id="v-c3m">命中</div>
+          <div class="case-title" id="v-c3t">預測命中，時常發生</div>
+          <div class="case-desc" id="v-c3d">多位企業主反饋：老師指引的關鍵轉折點，一一應驗。</div>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- TESTIMONIALS -->
-<section id="testi">
-  <div class="testi-wrap">
-    <div class="testi-left">
-      <div>
-        <div class="section-kicker" style="margin-bottom:14px">TESTIMONIALS</div>
-        <h2 class="testi-left-h">他們的<br>真實回饋</h2>
+<!-- ══ TESTIMONIALS ═══════════════════════════ -->
+<section class="section testi" id="testi">
+  <div class="container">
+    <div class="testi-top">
+      <div class="kicker" style="justify-content:center;color:var(--gold-lt)">
+        <span style="display:block;width:24px;height:1px;background:var(--gold-lt)"></span>
+        客戶見證
       </div>
-      <div>
-        <div class="testi-left-q">"</div>
-        <p style="font-size:13px;color:rgba(245,242,236,.35);line-height:1.8">超過 500 位企業主選擇以易經智慧輔助商業決策</p>
-      </div>
+      <h2 class="section-title light" style="margin-top:12px">他們這樣說</h2>
     </div>
-    <div class="testi-right">
-      <div class="testi-item rv">
-        <div class="testi-ss"><img id="t1-img" src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAgAAAQABAAD/wAARCAGkAYgDACIAAREBAhEB/9sAQwAIBgYHBgUIBwcHCQkI
+    <div class="testi-grid">
+      <div class="testi-card rv">
+        <div class="testi-card-img">
+          <img id="t1-img" src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAgAAAQABAAD/wAARCAGkAYgDACIAAREBAhEB/9sAQwAIBgYHBgUIBwcHCQkI
 CgwUDQwLCwwZEhMPFB0aHx4dGhwcICQuJyAiLCMcHCg3KSwwMTQ0NB8nOT04MjwuMzQy/9sAQwEJ
 CQkMCwwYDQ0YMiEcITIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIy
 MjIyMjIy/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQA
@@ -5759,245 +6441,243 @@ FOooAb5af3F/IUeWn9xfyFOooAb5af3F/IUeWn9xfyFOooAb5af3F/IUeWn9xfyFOooAb5af3F/I
 UeWn9xfyFOooAb5af3F/IUeWn9xfyFOooAb5af3F/IUeWn9xfyFOooAb5af3F/IUbE/ur+VOooAK
 KKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAoo
 ooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiii
-gAooooAKKKKACiiigAooooAKKKKACiiigD//2Q==" alt="見證截圖"></div>
-        <div class="testi-body" id="t1-body">老師超準！按照建議的時間點去談合作，果然順利成交。</div>
-        <div class="testi-by" id="t1-by">蔡小姐 — 科技業負責人</div>
+gAooooAKKKKACiiigAooooAKKKKACiiigD//2Q==" alt="客戶見證截圖">
+        </div>
+        <p class="testi-quote" id="v-t1b">老師超準！按照建議的時間點去談合作，果然順利成交。</p>
+        <div class="testi-who" id="v-t1by">蔡小姐 · 科技業負責人</div>
       </div>
-      <div class="testi-item rv">
-        <div class="testi-body" id="t2-body">按照老師的提示去做，果然就通了。近兩個月以 35 萬為底，穩定獲利。</div>
-        <div class="testi-by" id="t2-by">梨子 — 投資人</div>
+      <div class="testi-card rv">
+        <p class="testi-quote" id="v-t2b">按照老師的提示去做，果然就通了。近兩個月以 35 萬為底，穩定獲利。</p>
+        <div class="testi-who" id="v-t2by">梨子 · 投資人</div>
       </div>
-      <div class="testi-item rv">
-        <div class="testi-body" id="t3-body">氣在來，運再來。老師說的時機點，我帶動整個團隊上聘，真的成了。</div>
-        <div class="testi-by" id="t3-by">Aaron — 業務主管</div>
+      <div class="testi-card rv">
+        <p class="testi-quote" id="v-t3b">氣在來，運再來。老師說的時機點，我帶動整個團隊上聘，真的成了。</p>
+        <div class="testi-who" id="v-t3by">Aaron · 業務主管</div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- PROCESS -->
-<section class="process" id="process">
-  <div class="section-kicker">HOW IT WORKS</div>
-  <h2 class="section-h" style="margin-top:12px">諮詢流程</h2>
-  <div class="proc-grid">
-    <div class="proc-step rv"><div class="proc-n">01</div><div class="proc-t">加入 LINE</div><p class="proc-d">點擊按鈕加入官方 LINE，填寫姓名與諮詢主題，助理 24 小時內回覆。</p></div>
-    <div class="proc-step rv"><div class="proc-n">02</div><div class="proc-t">提供八字資料</div><p class="proc-d">提供出生年月日時，農曆國曆皆可，老師預先進行命盤分析準備。</p></div>
-    <div class="proc-step rv"><div class="proc-n">03</div><div class="proc-t">一對一諮詢</div><p class="proc-d">線上視訊或面談，約 60—90 分鐘，深度解析問題並給出具體建議。</p></div>
-    <div class="proc-step rv"><div class="proc-n">04</div><div class="proc-t">執行追蹤</div><p class="proc-d">按建議時機採取行動，必要時可預約後續追蹤諮詢，持續調整方向。</p></div>
-  </div>
-</section>
-
-<!-- FINAL CTA -->
-<section class="fcta">
-  <div class="fcta-l">
-    <div>
-      <div class="section-kicker" style="color:#C8A87A;margin-bottom:18px">BOOK A SESSION</div>
-      <div class="fcta-h" id="cta-h">準備好了嗎？</div>
-      <p class="fcta-sub" id="cta-sub">加入 LINE 官方帳號，預約一對一諮詢，讓易經智慧為您的事業指路。</p>
-    </div>
-    <div class="fcta-svcs">
-      <div class="fcta-svc">企業經營方向與時機判斷</div>
-      <div class="fcta-svc">重要合作與合夥決策</div>
-      <div class="fcta-svc">擴張、轉型、遷址評估</div>
-      <div class="fcta-svc">年度事業運勢與戰略規劃</div>
-    </div>
-  </div>
-  <div class="fcta-r">
-    <div>
-      <a class="line-btn" href="https://lin.ee/SRnO1uW" target="_blank" rel="noopener" id="main-line">
-        <svg viewBox="0 0 48 48" fill="white"><path d="M24 4C12.95 4 4 12.06 4 22c0 8.84 7.28 16.27 17.4 17.75.68.15 1.6.45 1.83 1.03.21.53.14 1.36.07 1.9l-.3 1.78c-.09.53-.42 2.07 1.81 1.13C27.1 44.53 38 35.68 38 22c0-9.94-6.27-18-14-18z"/></svg>
-        加入 LINE 預約諮詢
-      </a>
-      <p class="fcta-note">24 小時內回覆 · 保密原則 · 不強迫推銷</p>
-    </div>
-    <div class="fcta-contact">
-      <div class="fcta-contact-lbl">CONTACT</div>
-      <a href="https://lin.ee/SRnO1uW" target="_blank" rel="noopener" id="foot-line">LINE @ 立即聯絡</a>
+<!-- ══ PROCESS ════════════════════════════════ -->
+<section class="section process" id="process">
+  <div class="container">
+    <div class="kicker">服務流程</div>
+    <h2 class="section-title" style="margin-bottom:0"><b>四步驟</b>，開啟諮詢</h2>
+    <div class="proc-grid">
+      <div class="proc-item rv">
+        <div class="proc-n">01</div>
+        <div class="proc-t">加入 LINE</div>
+        <p class="proc-d">點擊按鈕加入官方 LINE，填寫姓名與諮詢主題，助理 24 小時內回覆。</p>
+      </div>
+      <div class="proc-item rv">
+        <div class="proc-n">02</div>
+        <div class="proc-t">提供八字資料</div>
+        <p class="proc-d">提供出生年月日時，農曆國曆皆可，老師預先進行命盤分析準備。</p>
+      </div>
+      <div class="proc-item rv">
+        <div class="proc-n">03</div>
+        <div class="proc-t">一對一諮詢</div>
+        <p class="proc-d">線上視訊或面談，約 60—90 分鐘，深度解析問題並給出具體建議。</p>
+      </div>
+      <div class="proc-item rv">
+        <div class="proc-n">04</div>
+        <div class="proc-t">執行追蹤</div>
+        <p class="proc-d">按建議時機採取行動，必要時可預約後續追蹤諮詢，持續調整方向。</p>
+      </div>
     </div>
   </div>
 </section>
 
+<!-- ══ CTA ════════════════════════════════════ -->
+<section class="section cta-section">
+  <div class="container">
+    <div class="cta-inner">
+      <div class="cta-left rv">
+        <div class="kicker" style="color:var(--gold-lt)">
+          <span style="display:block;width:24px;height:1px;background:var(--gold-lt)"></span>
+          立即預約
+        </div>
+        <h2 id="v-cta-t" style="margin-top:12px">立即預約<br><b>一對一諮詢</b></h2>
+        <p id="v-cta-s" class="section-desc light" style="margin-top:16px">加入 LINE 官方帳號，填寫基本資料後，助理將於 24 小時內與您確認時間。</p>
+        <div class="cta-services" style="margin-top:36px">
+          <div class="cta-svc">企業經營方向與時機判斷</div>
+          <div class="cta-svc">重要合作與合夥決策</div>
+          <div class="cta-svc">擴張、轉型、遷址評估</div>
+          <div class="cta-svc">年度事業運勢與戰略規劃</div>
+        </div>
+      </div>
+      <div class="cta-right rv">
+        <div class="cta-line-wrap">
+          <a href="https://lin.ee/SRnO1uW" target="_blank" rel="noopener" class="btn btn-line line-target">
+            <svg viewBox="0 0 48 48" fill="white"><path d="M24 4C12.95 4 4 12.06 4 22c0 8.84 7.28 16.27 17.4 17.75.68.15 1.6.45 1.83 1.03.21.53.14 1.36.07 1.9l-.3 1.78c-.09.53-.42 2.07 1.81 1.13C27.1 44.53 38 35.68 38 22c0-9.94-6.27-18-14-18z"/></svg>
+            加入 LINE 預約諮詢
+          </a>
+          <p class="cta-note">24 小時內回覆 · 保密原則 · 不強迫推銷</p>
+        </div>
+        <div style="border-top:1px solid rgba(255,255,255,.08);padding-top:32px;margin-top:auto">
+          <div style="font-family:var(--mono);font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.25);margin-bottom:10px">CONTACT</div>
+          <a href="https://lin.ee/SRnO1uW" target="_blank" rel="noopener" class="line-target"
+             style="font-family:var(--mono);font-size:13px;letter-spacing:1px;color:var(--gold-lt);text-decoration:none">
+            LINE @ 立即聯絡 →
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ FOOTER ═════════════════════════════════ -->
 <footer>
-  <p>© 2025 腦波易經諮詢 · 本服務提供方向性建議，最終決策由客戶自行判斷</p>
-  <a href="https://lin.ee/SRnO1uW" target="_blank" rel="noopener">lin.ee/SRnO1uW</a>
+  <div class="footer-inner">
+    <p>© 2025 腦波易經諮詢 &nbsp;·&nbsp; 本服務提供方向性建議，最終決策由客戶自行判斷</p>
+    <a href="https://lin.ee/SRnO1uW" target="_blank" rel="noopener" class="line-target">lin.ee/SRnO1uW</a>
+  </div>
 </footer>
 
 <script>
-// ── LINE 連結統一處理 ──────────────────────────
-// 所有 LINE 連結都用 window.open 確保能在任何環境跳轉
-var LINE_IDS = ['nav-line','hero-line','main-line','foot-line'];
-LINE_IDS.forEach(function(id) {
-  var el = document.getElementById(id);
-  if (!el) return;
-  el.addEventListener('click', function(e) {
-    e.preventDefault();
-    var url = el.getAttribute('href') || 'https://lin.ee/SRnO1uW';
-    window.open(url, '_blank', 'noopener,noreferrer');
+var LINE_URL = 'https://lin.ee/SRnO1uW';
+var ADMIN_PW = 'iching2025';
+
+// ── LINE click handler ──
+function goLine(e) {
+  if(e) e.preventDefault();
+  window.open(LINE_URL, '_blank', 'noopener,noreferrer');
+}
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('.line-target').forEach(function(el) {
+    el.addEventListener('click', goLine);
   });
 });
 
-// ── PASSWORD & ADMIN ──────────────────────────
-// 密碼設定（可在後台修改後重新發布）
-var ADMIN_PW = 'iching2025';
-
-// Logo 連點計數器
-var clickCount = 0;
-var clickTimer = null;
+// ── Logo 5-click trigger ──
+var _cc=0, _ct=null;
 document.addEventListener('DOMContentLoaded', function() {
   var logo = document.querySelector('.nav-logo');
-  if (logo) {
-    logo.addEventListener('click', function(e) {
-      e.preventDefault();
-      clickCount++;
-      clearTimeout(clickTimer);
-      clickTimer = setTimeout(function() { clickCount = 0; }, 1800);
-      if (clickCount >= 5) {
-        clickCount = 0;
-        openPwModal();
-      }
-    });
-  }
+  if(!logo) return;
+  logo.addEventListener('click', function(e) {
+    e.preventDefault();
+    _cc++;
+    clearTimeout(_ct);
+    _ct = setTimeout(function(){_cc=0;}, 1800);
+    if(_cc >= 5) { _cc=0; openPwModal(); }
+  });
+  document.getElementById('pw-overlay').addEventListener('click', function(e) {
+    if(e.target===this) closePwModal();
+  });
 });
 
 function openPwModal() {
   document.getElementById('pw-overlay').classList.add('open');
-  document.getElementById('pw-input').value = '';
+  document.getElementById('pw-input').value='';
   document.getElementById('pw-err').classList.remove('show');
-  setTimeout(function() { document.getElementById('pw-input').focus(); }, 100);
+  setTimeout(function(){document.getElementById('pw-input').focus();},80);
 }
-
 function closePwModal() {
   document.getElementById('pw-overlay').classList.remove('open');
-  document.getElementById('pw-input').value = '';
+  document.getElementById('pw-input').value='';
   document.getElementById('pw-err').classList.remove('show');
 }
-
 function checkPw() {
-  var val = document.getElementById('pw-input').value;
-  if (val === ADMIN_PW) {
+  var v = document.getElementById('pw-input').value;
+  if(v === ADMIN_PW) {
     closePwModal();
     document.getElementById('adm-panel').classList.add('open');
   } else {
     var inp = document.getElementById('pw-input');
-    var err = document.getElementById('pw-err');
-    inp.classList.remove('shake');
-    void inp.offsetWidth; // reflow
-    inp.classList.add('shake');
-    err.classList.add('show');
-    inp.value = '';
-    setTimeout(function() { inp.classList.remove('shake'); }, 400);
+    inp.classList.remove('shake'); void inp.offsetWidth; inp.classList.add('shake');
+    document.getElementById('pw-err').classList.add('show');
+    inp.value='';
+    setTimeout(function(){inp.classList.remove('shake');},400);
   }
 }
 
-// 點擊 overlay 背景關閉
-document.addEventListener('DOMContentLoaded', function() {
-  document.getElementById('pw-overlay').addEventListener('click', function(e) {
-    if (e.target === this) closePwModal();
-  });
-});
-
-function toggleAdmin() {
-  document.getElementById('adm-panel').classList.toggle('open');
-}
-
-// ── TOAST ─────────────────────────────────────
-function showToast(msg) {
-  var t = document.getElementById('toast');
-  t.textContent = msg || '已套用 ✓';
-  t.classList.add('show');
-  setTimeout(function() { t.classList.remove('show'); }, 2200);
-}
-
-// ── IMAGE UPLOAD ──────────────────────────────
+// ── Image upload ──
 function doUpload(input, imgId, prevId) {
-  var file = input.files[0];
-  if (!file) return;
-  var reader = new FileReader();
-  reader.onload = function(e) {
-    var src = e.target.result;
-    // Update preview in admin
-    var prev = document.getElementById(prevId);
-    if (prev) { prev.src = src; prev.style.display = 'block'; }
-    // Update page image
-    var el = document.getElementById(imgId);
-    if (el) {
-      if (el.tagName === 'IMG') {
-        el.src = src;
-      }
-    }
-    // Special: case 3 has a placeholder div, replace with actual img
-    if (imgId === 'c3-img') {
-      var wrap = document.getElementById('c3-img-wrap');
-      if (wrap) {
-        wrap.innerHTML = '<img id="c3-img" src="' + src + '" alt="案例三" style="width:100%;height:100%;object-fit:cover;opacity:.72;filter:saturate(.7) contrast(1.1)">';
+  var file=input.files[0]; if(!file) return;
+  var r=new FileReader();
+  r.onload=function(e) {
+    var src=e.target.result;
+    var prev=document.getElementById(prevId);
+    if(prev){prev.src=src;prev.style.display='block';}
+    var el=document.getElementById(imgId);
+    if(el) {
+      if(el.tagName==='IMG') {
+        el.src=src;
+      } else {
+        // placeholder wrapper — replace content with img
+        el.innerHTML='<img src="'+src+'" style="width:100%;height:100%;object-fit:cover;border-radius:12px;">';
       }
     }
     showToast('圖片已上傳 ✓');
   };
-  reader.readAsDataURL(file);
+  r.readAsDataURL(file);
 }
 
-// ── APPLY ALL CHANGES ─────────────────────────
+// ── Apply all ──
 function applyAll() {
-  // Hero title
-  document.getElementById('h1-l1').textContent = document.getElementById('e-h1').value;
-  document.getElementById('h1-l2').textContent = document.getElementById('e-h2').value;
-  document.getElementById('h1-l3').textContent = document.getElementById('e-h3').value;
-  document.getElementById('hero-sub').textContent = document.getElementById('e-hs').value;
+  // Hero
+  var h1=document.getElementById('e-h1').value;
+  var h2=document.getElementById('e-h2').value;
+  document.getElementById('v-h1').textContent=h1;
+  document.getElementById('v-h2').textContent=h2;
+  document.getElementById('v-hs').textContent=document.getElementById('e-hs').value;
 
-  // LINE URL — update ALL links
-  var url = document.getElementById('e-line').value.trim();
-  if (url) {
-    LINE_IDS.forEach(function(id) {
-      var el = document.getElementById(id);
-      if (el) el.setAttribute('href', url);
-    });
-  }
+  // LINE url
+  var url=document.getElementById('e-line').value.trim()||LINE_URL;
+  LINE_URL=url;
+  document.querySelectorAll('.line-target').forEach(function(el){el.setAttribute('href',url);});
 
   // Stats
-  document.getElementById('s1n').textContent = document.getElementById('e-s1n').value;
-  document.getElementById('s1l').textContent = document.getElementById('e-s1l').value;
-  document.getElementById('s2n').textContent = document.getElementById('e-s2n').value;
-  document.getElementById('s2l').textContent = document.getElementById('e-s2l').value;
-  document.getElementById('s3n').textContent = document.getElementById('e-s3n').value;
-  document.getElementById('s3l').textContent = document.getElementById('e-s3l').value;
+  document.getElementById('v-s1n').textContent=document.getElementById('e-s1n').value;
+  document.getElementById('v-s1l').textContent=document.getElementById('e-s1l').value;
+  document.getElementById('v-s2n').textContent=document.getElementById('e-s2n').value;
+  document.getElementById('v-s2l').textContent=document.getElementById('e-s2l').value;
+  document.getElementById('v-s3n').textContent=document.getElementById('e-s3n').value;
+  document.getElementById('v-s3l').textContent=document.getElementById('e-s3l').value;
 
   // Cases
   ['1','2','3'].forEach(function(n) {
-    var metric = document.getElementById('e-c' + n + 'm');
-    var title  = document.getElementById('e-c' + n + 't');
-    var desc   = document.getElementById('e-c' + n + 'd');
-    if (metric) document.getElementById('c' + n + '-metric').textContent = metric.value;
-    if (title)  document.getElementById('c' + n + '-title').textContent  = title.value;
-    if (desc)   document.getElementById('c' + n + '-desc').textContent   = desc.value;
+    document.getElementById('v-c'+n+'m').textContent=document.getElementById('e-c'+n+'m').value;
+    document.getElementById('v-c'+n+'t').textContent=document.getElementById('e-c'+n+'t').value;
+    document.getElementById('v-c'+n+'d').textContent=document.getElementById('e-c'+n+'d').value;
   });
 
   // Testimonials
   ['1','2','3'].forEach(function(n) {
-    var body = document.getElementById('e-t' + n + 'b');
-    var by   = document.getElementById('e-t' + n + 'by');
-    var bEl  = document.getElementById('t' + n + '-body');
-    var byEl = document.getElementById('t' + n + '-by');
-    if (body && bEl)  bEl.textContent  = body.value;
-    if (by   && byEl) byEl.textContent = by.value;
+    var b=document.getElementById('e-t'+n+'b');
+    var by=document.getElementById('e-t'+n+'by');
+    var vb=document.getElementById('v-t'+n+'b');
+    var vby=document.getElementById('v-t'+n+'by');
+    if(b&&vb) vb.textContent=b.value;
+    if(by&&vby) vby.textContent=by.value;
   });
 
   // CTA
-  document.getElementById('cta-h').textContent  = document.getElementById('e-cta-t').value;
-  document.getElementById('cta-sub').textContent = document.getElementById('e-cta-s').value;
+  document.getElementById('v-cta-t').textContent=document.getElementById('e-cta-t').value;
+  document.getElementById('v-cta-s').textContent=document.getElementById('e-cta-s').value;
 
   showToast('所有變更已套用 ✓');
 }
 
-// ── SCROLL REVEAL ─────────────────────────────
-var obs = new IntersectionObserver(function(entries) {
-  entries.forEach(function(e) {
-    if (e.isIntersecting) { e.target.classList.add('in'); }
+// ── Toast ──
+function showToast(msg) {
+  var t=document.getElementById('toast');
+  t.textContent=msg||'已套用 ✓';
+  t.classList.add('show');
+  setTimeout(function(){t.classList.remove('show');},2400);
+}
+
+// ── Scroll reveal ──
+document.addEventListener('DOMContentLoaded', function() {
+  var obs=new IntersectionObserver(function(entries) {
+    entries.forEach(function(e) {
+      if(e.isIntersecting) e.target.classList.add('in');
+    });
+  },{threshold:0.08});
+  document.querySelectorAll('.rv').forEach(function(el,i) {
+    el.style.transitionDelay=(i%4)*0.1+'s';
+    obs.observe(el);
   });
-}, { threshold: 0.1 });
-document.querySelectorAll('.rv').forEach(function(el, i) {
-  el.style.transitionDelay = (i % 4) * 0.08 + 's';
-  obs.observe(el);
 });
 </script>
 </body>
